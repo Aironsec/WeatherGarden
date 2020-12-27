@@ -6,6 +6,11 @@ plugins {
 }
 
 android {
+
+    buildFeatures {
+        viewBinding true
+    }
+
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
 
@@ -27,15 +32,21 @@ android {
         }
     }
 
+    buildTypes.each {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("apikey.properties").newDataInputStream())
+        def weatherApiKey = properties.getProperty("weather_api_key", "")
+        def placesApiKey = properties.getProperty("places_api_key", "")
+        it.buildConfigField "String", "WEATHER_API_KEY", weatherApiKey
+        it.buildConfigField "String", "PLACES_API_KEY", placesApiKey
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
-    viewBinding
-            { enabled = true }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

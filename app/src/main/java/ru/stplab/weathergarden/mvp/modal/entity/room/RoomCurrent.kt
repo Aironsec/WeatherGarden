@@ -7,30 +7,24 @@ import androidx.room.PrimaryKey
 
 @Entity(
     foreignKeys = [ForeignKey(
-        entity = CityWeather::class,
-        parentColumns = ["id"],
-        childColumns = ["cityWeatherId"],
+        entity = RoomCity::class,
+        parentColumns = ["postalCode"],
+        childColumns = ["cityPostalCode"],
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index("cityWeatherId")]
+    indices = [Index("cityPostalCode")]
 )
-class HourlyWeather(
+class RoomCurrent(
     @PrimaryKey(autoGenerate = true)
     var id: Long,
     var dt: Int,
-// TODO: 19.12.2020 < вынести в отдельную таблицу
-    var day: Double,
-    var min: Double,
-    var max: Double,
-    var night: Double,
-    var eve: Double,
-    var morn: Double,
-// TODO: 19.12.2020 >
+    var sunrise: Int,
+    var sunset: Int,
+    var temp: Double,
     var pressure: Int,
     var humidity: Int,
     var windSpeed: Double,
     var windDeg: Int,
     var icon: String,
-    var pop: Int,
-    var cityWeatherId: Long
+    var cityPostalCode: String
 )

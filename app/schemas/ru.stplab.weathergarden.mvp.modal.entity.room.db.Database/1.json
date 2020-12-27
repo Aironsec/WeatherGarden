@@ -2,16 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7cb0982b923c2d1a6d9727abdf55f529",
+    "identityHash": "878a7e9fb64862909309dedaa3b21681",
     "entities": [
       {
-        "tableName": "CityWeather",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cityName` TEXT NOT NULL, `cityRegion` TEXT NOT NULL, `lat` REAL NOT NULL, `lon` REAL NOT NULL, `timeUpdate` INTEGER NOT NULL)",
+        "tableName": "RoomCity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`postalCode` TEXT NOT NULL, `cityName` TEXT NOT NULL, `citySubName` TEXT NOT NULL, `lat` REAL NOT NULL, `lon` REAL NOT NULL, PRIMARY KEY(`postalCode`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
+            "fieldPath": "postalCode",
+            "columnName": "postalCode",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -21,8 +21,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "cityRegion",
-            "columnName": "cityRegion",
+            "fieldPath": "citySubName",
+            "columnName": "citySubName",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -37,37 +37,30 @@
             "columnName": "lon",
             "affinity": "REAL",
             "notNull": true
-          },
-          {
-            "fieldPath": "timeUpdate",
-            "columnName": "timeUpdate",
-            "affinity": "INTEGER",
-            "notNull": true
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "postalCode"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [
           {
-            "name": "index_CityWeather_id_cityName_cityRegion",
+            "name": "index_RoomCity_postalCode_cityName",
             "unique": false,
             "columnNames": [
-              "id",
-              "cityName",
-              "cityRegion"
+              "postalCode",
+              "cityName"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_CityWeather_id_cityName_cityRegion` ON `${TABLE_NAME}` (`id`, `cityName`, `cityRegion`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_RoomCity_postalCode_cityName` ON `${TABLE_NAME}` (`postalCode`, `cityName`)"
           }
         ],
         "foreignKeys": []
       },
       {
-        "tableName": "CurrentWeather",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dt` INTEGER NOT NULL, `sunrise` INTEGER NOT NULL, `sunset` INTEGER NOT NULL, `temp` REAL NOT NULL, `pressure` INTEGER NOT NULL, `humidity` INTEGER NOT NULL, `wind_speed` REAL NOT NULL, `wind_deg` INTEGER NOT NULL, `icon` TEXT NOT NULL, `cityWeatherId` INTEGER NOT NULL, FOREIGN KEY(`cityWeatherId`) REFERENCES `CityWeather`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "tableName": "RoomCurrent",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dt` INTEGER NOT NULL, `sunrise` INTEGER NOT NULL, `sunset` INTEGER NOT NULL, `temp` REAL NOT NULL, `pressure` INTEGER NOT NULL, `humidity` INTEGER NOT NULL, `windSpeed` REAL NOT NULL, `windDeg` INTEGER NOT NULL, `icon` TEXT NOT NULL, `cityPostalCode` TEXT NOT NULL, FOREIGN KEY(`cityPostalCode`) REFERENCES `RoomCity`(`postalCode`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -112,14 +105,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "wind_speed",
-            "columnName": "wind_speed",
+            "fieldPath": "windSpeed",
+            "columnName": "windSpeed",
             "affinity": "REAL",
             "notNull": true
           },
           {
-            "fieldPath": "wind_deg",
-            "columnName": "wind_deg",
+            "fieldPath": "windDeg",
+            "columnName": "windDeg",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -130,9 +123,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "cityWeatherId",
-            "columnName": "cityWeatherId",
-            "affinity": "INTEGER",
+            "fieldPath": "cityPostalCode",
+            "columnName": "cityPostalCode",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -144,31 +137,31 @@
         },
         "indices": [
           {
-            "name": "index_CurrentWeather_cityWeatherId",
+            "name": "index_RoomCurrent_cityPostalCode",
             "unique": false,
             "columnNames": [
-              "cityWeatherId"
+              "cityPostalCode"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_CurrentWeather_cityWeatherId` ON `${TABLE_NAME}` (`cityWeatherId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_RoomCurrent_cityPostalCode` ON `${TABLE_NAME}` (`cityPostalCode`)"
           }
         ],
         "foreignKeys": [
           {
-            "table": "CityWeather",
+            "table": "RoomCity",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "cityWeatherId"
+              "cityPostalCode"
             ],
             "referencedColumns": [
-              "id"
+              "postalCode"
             ]
           }
         ]
       },
       {
-        "tableName": "DailyWeather",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dt` INTEGER NOT NULL, `sunrise` INTEGER NOT NULL, `sunset` INTEGER NOT NULL, `day` REAL NOT NULL, `min` REAL NOT NULL, `max` REAL NOT NULL, `night` REAL NOT NULL, `eve` REAL NOT NULL, `morn` REAL NOT NULL, `pressure` INTEGER NOT NULL, `humidity` INTEGER NOT NULL, `windSpeed` REAL NOT NULL, `windDeg` INTEGER NOT NULL, `icon` TEXT NOT NULL, `pop` INTEGER NOT NULL, `cityWeatherId` INTEGER NOT NULL, FOREIGN KEY(`cityWeatherId`) REFERENCES `CityWeather`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "tableName": "RoomDaily",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dt` INTEGER NOT NULL, `sunrise` INTEGER NOT NULL, `sunset` INTEGER NOT NULL, `day` REAL NOT NULL, `min` REAL NOT NULL, `max` REAL NOT NULL, `night` REAL NOT NULL, `eve` REAL NOT NULL, `morn` REAL NOT NULL, `pressure` INTEGER NOT NULL, `humidity` INTEGER NOT NULL, `windSpeed` REAL NOT NULL, `windDeg` INTEGER NOT NULL, `icon` TEXT NOT NULL, `pop` REAL NOT NULL, `cityPostalCode` TEXT NOT NULL, FOREIGN KEY(`cityPostalCode`) REFERENCES `RoomCity`(`postalCode`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -263,13 +256,13 @@
           {
             "fieldPath": "pop",
             "columnName": "pop",
-            "affinity": "INTEGER",
+            "affinity": "REAL",
             "notNull": true
           },
           {
-            "fieldPath": "cityWeatherId",
-            "columnName": "cityWeatherId",
-            "affinity": "INTEGER",
+            "fieldPath": "cityPostalCode",
+            "columnName": "cityPostalCode",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -281,31 +274,31 @@
         },
         "indices": [
           {
-            "name": "index_DailyWeather_cityWeatherId",
+            "name": "index_RoomDaily_cityPostalCode",
             "unique": false,
             "columnNames": [
-              "cityWeatherId"
+              "cityPostalCode"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_DailyWeather_cityWeatherId` ON `${TABLE_NAME}` (`cityWeatherId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_RoomDaily_cityPostalCode` ON `${TABLE_NAME}` (`cityPostalCode`)"
           }
         ],
         "foreignKeys": [
           {
-            "table": "CityWeather",
+            "table": "RoomCity",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "cityWeatherId"
+              "cityPostalCode"
             ],
             "referencedColumns": [
-              "id"
+              "postalCode"
             ]
           }
         ]
       },
       {
-        "tableName": "HourlyWeather",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dt` INTEGER NOT NULL, `day` REAL NOT NULL, `min` REAL NOT NULL, `max` REAL NOT NULL, `night` REAL NOT NULL, `eve` REAL NOT NULL, `morn` REAL NOT NULL, `pressure` INTEGER NOT NULL, `humidity` INTEGER NOT NULL, `windSpeed` REAL NOT NULL, `windDeg` INTEGER NOT NULL, `icon` TEXT NOT NULL, `pop` INTEGER NOT NULL, `cityWeatherId` INTEGER NOT NULL, FOREIGN KEY(`cityWeatherId`) REFERENCES `CityWeather`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "tableName": "RoomHourly",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dt` INTEGER NOT NULL, `temp` REAL NOT NULL, `pressure` INTEGER NOT NULL, `humidity` INTEGER NOT NULL, `windSpeed` REAL NOT NULL, `windDeg` INTEGER NOT NULL, `icon` TEXT NOT NULL, `pop` REAL NOT NULL, `cityPostalCode` TEXT NOT NULL, FOREIGN KEY(`cityPostalCode`) REFERENCES `RoomCity`(`postalCode`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -320,38 +313,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "day",
-            "columnName": "day",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "min",
-            "columnName": "min",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "max",
-            "columnName": "max",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "night",
-            "columnName": "night",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "eve",
-            "columnName": "eve",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "morn",
-            "columnName": "morn",
+            "fieldPath": "temp",
+            "columnName": "temp",
             "affinity": "REAL",
             "notNull": true
           },
@@ -388,13 +351,13 @@
           {
             "fieldPath": "pop",
             "columnName": "pop",
-            "affinity": "INTEGER",
+            "affinity": "REAL",
             "notNull": true
           },
           {
-            "fieldPath": "cityWeatherId",
-            "columnName": "cityWeatherId",
-            "affinity": "INTEGER",
+            "fieldPath": "cityPostalCode",
+            "columnName": "cityPostalCode",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -406,24 +369,24 @@
         },
         "indices": [
           {
-            "name": "index_HourlyWeather_cityWeatherId",
+            "name": "index_RoomHourly_cityPostalCode",
             "unique": false,
             "columnNames": [
-              "cityWeatherId"
+              "cityPostalCode"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_HourlyWeather_cityWeatherId` ON `${TABLE_NAME}` (`cityWeatherId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_RoomHourly_cityPostalCode` ON `${TABLE_NAME}` (`cityPostalCode`)"
           }
         ],
         "foreignKeys": [
           {
-            "table": "CityWeather",
+            "table": "RoomCity",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "cityWeatherId"
+              "cityPostalCode"
             ],
             "referencedColumns": [
-              "id"
+              "postalCode"
             ]
           }
         ]
@@ -432,7 +395,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7cb0982b923c2d1a6d9727abdf55f529')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '878a7e9fb64862909309dedaa3b21681')"
     ]
   }
 }

@@ -1,28 +1,31 @@
 package ru.stplab.weathergarden.mvp.modal.entity.room.dao
 
 import androidx.room.*
-import ru.stplab.weathergarden.mvp.modal.entity.room.CityWeather
-import ru.stplab.weathergarden.mvp.modal.entity.room.dao.relation.CurrentHourlyDaily
+import ru.stplab.weathergarden.mvp.modal.entity.room.RoomCity
+import ru.stplab.weathergarden.mvp.modal.entity.room.dao.relation.CurrentRelation
 
 @Dao
 interface CityDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(cityWeather: CityWeather)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insert(roomCity: RoomCity)
 
     @Update
-    fun update(cityWeather: CityWeather)
+    fun update(roomCity: RoomCity)
 
     @Delete
-    fun delete(cityWeather: CityWeather)
+    fun delete(roomCity: RoomCity)
 
-    @Query("SELECT * FROM CityWeather ORDER BY cityName")
-    fun getAll(): List<CityWeather>
+    @Query("SELECT * FROM RoomCity ORDER BY cityName")
+    fun getAll(): List<RoomCity>
 
     @Transaction
-    @Query("SELECT * FROM CityWeather ORDER BY cityName")
-    fun getAllWithWeather(): List<CurrentHourlyDaily>
+    @Query("SELECT * FROM RoomCity ORDER BY cityName")
+    fun getAllWithWeather(): List<CurrentRelation>
 
-    @Query("SELECT * FROM CityWeather WHERE cityName = :cityName AND cityRegion = :cityRegion LIMIT 1")
-    fun findCity(cityName: String, cityRegion: String): CityWeather?
+    @Query("SELECT * FROM RoomCity WHERE cityName = :cityName LIMIT 1")
+    fun findCityByName(cityName: String): RoomCity?
+
+    @Query("SELECT * FROM RoomCity WHERE postalCode = :postalCode LIMIT 1")
+    fun findCityByPostalCode(postalCode: String): RoomCity?
 }
